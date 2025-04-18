@@ -47,7 +47,7 @@ def get_default_interface():
             return fields[0]
 
 def get_mounts():
-    mounts = []
+    mounts = set()
     with open("/proc/mounts") as mount:
         for line in mount:
             fields = line.strip().split()
@@ -55,9 +55,9 @@ def get_mounts():
                 if ("boot" in fields[1]) or ("fuse" in fields) or ("/snap/" in fields[1]) or ("/loop" in fields[0]) or ("/docker" in fields[1]):
                     continue
                 else:
-                    mounts.append(fields[1])
+                    mounts.add(fields[1])
             if fields[2] == "zfs":
-                mounts.append(fields[1])
+                mounts.add(fields[1])
     with open("/etc/fstab") as fstab:
         for line in fstab:
             fields = line.strip().split()
@@ -66,7 +66,7 @@ def get_mounts():
                     mounts.remove(fields[1])
                 except:
                     pass
-    return mounts
+    return sorted(mounts)
 
 def generate_page_list(user):
     admin_user = current_app.config['ADMIN_USER']
